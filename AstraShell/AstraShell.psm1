@@ -376,12 +376,16 @@ function Get-AstraConfig {
         [string]$Section
     )
 
-    if (-not $script:AstraShellConfig) {
-        Initialize-AstraShell
-    }
+    Assert-AstraShellInitialized
 
     if ($Section) {
-        return $script:AstraShellConfig.$Section
+        if ($script:AstraShellConfig.PSObject.Properties.Name -contains $Section) {
+            return $script:AstraShellConfig.$Section
+        }
+        else {
+            Write-Warning "Configuration section '$Section' not found"
+            return $null
+        }
     }
 
     return $script:AstraShellConfig
@@ -404,14 +408,21 @@ function Set-AstraConfig {
         $Value
     )
 
-    if (-not $script:AstraShellConfig) {
-        Initialize-AstraShell
-    }
+    Assert-AstraShellInitialized
 
     if ($script:AstraShellConfig.PSObject.Properties.Name -contains $Section) {
-        $script:AstraShellConfig.$Section.$Key = $Value
-        Save-AstraConfig
-        Write-Host "✓ Configuration updated: $Section.$Key = $Value" -ForegroundColor Green
+        # Check if the key exists in the section
+        if ($script:AstraShellConfig.$Section.PSObject.Properties.Name -contains $Key) {
+            $script:AstraShellConfig.$Section.$Key = $Value
+            Save-AstraConfig
+            Write-Host "✓ Configuration updated: $Section.$Key = $Value" -ForegroundColor Green
+        }
+        else {
+            Write-Warning "Key '$Key' not found in section '$Section'. Adding new key..."
+            $script:AstraShellConfig.$Section | Add-Member -MemberType NoteProperty -Name $Key -Value $Value -Force
+            Save-AstraConfig
+            Write-Host "✓ Configuration key added: $Section.$Key = $Value" -ForegroundColor Green
+        }
     }
     else {
         Write-Error "Configuration section '$Section' not found"
@@ -429,9 +440,7 @@ function Get-AstraSuggestion {
         [int]$Count = 5
     )
 
-    if (-not $script:AstraShellActive) {
-        Initialize-AstraShell
-    }
+    Assert-AstraShellInitialized
 
     Write-Host "🔮 Analyzing context for suggestions..." -ForegroundColor Cyan
 
@@ -467,7 +476,7 @@ function Get-AstraSuggestion {
         }
     }
 
-    if (Test-Path (Join-Path $currentPath "*.sln")) {
+    if (Get-ChildItem -Path $currentPath -Filter "*.sln" -ErrorAction SilentlyContinue) {
         $suggestions += [PSCustomObject]@{
             Command = "dotnet build"
             Description = "Build .NET solution"
@@ -649,6 +658,17 @@ function Test-PluginLoaded {
 
     return $script:AstraShellPlugins.ContainsKey($PluginName) -and
            $script:AstraShellPlugins[$PluginName].Loaded
+}
+
+<#
+.SYNOPSIS
+    Ensures AstraShell is properly initialized.
+#>
+function Assert-AstraShellInitialized {
+    if (-not $script:AstraShellActive -or -not $script:AstraShellConfig) {
+        Write-Verbose "AstraShell not initialized, initializing now..."
+        Initialize-AstraShell
+    }
 }
 
 #endregion

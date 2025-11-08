@@ -8,7 +8,8 @@
 #>
 
 #region Module Variables
-$script:IndexPath = Join-Path (Split-Path $PSScriptRoot -Parent) "Data\index.json"
+$dataDir = Join-Path (Split-Path $PSScriptRoot -Parent) "Data"
+$script:IndexPath = Join-Path $dataDir "index.json"
 $script:Index = $null
 $script:LastIndexUpdate = $null
 #endregion
