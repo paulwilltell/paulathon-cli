@@ -1,0 +1,122 @@
+// AstraShell Configuration File
+// This file uses JSONC format (JSON with Comments)
+{
+  // Feature toggles - enable/disable plugins
+  "Features": {
+    // Natural Language Parser - converts natural language to PowerShell commands
+    "NLParser": true,
+
+    // System Sentry - monitors system resources and provides alerts
+    "Sentry": true,
+
+    // RAG (Retrieval-Augmented Generation) - indexes local files for search
+    "RAG": true,
+
+    // Security - analyzes commands and URLs for threats
+    "Security": true,
+
+    // Intelligent suggestions based on context and history
+    "Suggestions": true
+  },
+
+  // Plugin configuration
+  "Plugins": {
+    // Automatically load all enabled plugins on startup
+    "AutoLoad": true
+  },
+
+  // RAG (Local File Indexing) Configuration
+  "RAG": {
+    // Paths to index for local search
+    // Add your project directories, documentation folders, etc.
+    "IndexPaths": [
+      // Examples (uncomment and modify for your system):
+      // "C:\\Projects",
+      // "C:\\Users\\YourName\\Documents\\Code",
+      // "D:\\Development"
+    ],
+
+    // Maximum file size to index (in bytes)
+    // Default: 10MB (10485760 bytes)
+    "MaxFileSize": 10485760,
+
+    // File types to index
+    "FileTypes": [
+      ".ps1",    // PowerShell scripts
+      ".psm1",   // PowerShell modules
+      ".psd1",   // PowerShell data files
+      ".md",     // Markdown documentation
+      ".txt",    // Text files
+      ".json",   // JSON files
+      ".xml",    // XML files
+      ".yml",    // YAML files
+      ".yaml",   // YAML files
+      ".py",     // Python files
+      ".js",     // JavaScript files
+      ".ts",     // TypeScript files
+      ".cs",     // C# files
+      ".java",   // Java files
+      ".cpp",    // C++ files
+      ".c",      // C files
+      ".go",     // Go files
+      ".rs"      // Rust files
+    ]
+  },
+
+  // System Sentry Configuration
+  "Sentry": {
+    // How often to check system resources (in seconds)
+    "MonitorInterval": 60,
+
+    // CPU usage threshold (percentage) - alert when exceeded
+    "CPUThreshold": 80,
+
+    // Memory usage threshold (percentage) - alert when exceeded
+    "MemoryThreshold": 80,
+
+    // Disk usage threshold (percentage) - alert when exceeded
+    "DiskThreshold": 90
+  },
+
+  // Security Configuration
+  "Security": {
+    // Enable VirusTotal domain checking
+    // NOTE: Requires a VirusTotal API key (free tier available)
+    "EnableVirusTotalCheck": false,
+
+    // VirusTotal API Key
+    // Get your free API key at: https://www.virustotal.com/gui/join-us
+    "VirusTotalApiKey": "",
+
+    // Block execution of commands with malicious URLs
+    "BlockMaliciousUrls": true,
+
+    // Confirm before executing commands that interact with external resources
+    "ConfirmExternalCommands": true
+  },
+
+  // Intelligent Suggestions Configuration
+  "Suggestions": {
+    // Maximum number of suggestions to display
+    "MaxSuggestions": 5,
+
+    // Use command history for suggestions
+    "UseHistory": true,
+
+    // Use current directory context for suggestions
+    "UseContext": true
+  },
+
+  // Advanced Settings
+  "Advanced": {
+    // Logging level: "Error", "Warning", "Info", "Verbose"
+    "LogLevel": "Info",
+
+    // Maximum number of command history entries to keep
+    "MaxHistoryEntries": 1000,
+
+    // Cache expiration time (in seconds)
+    // Affects suggestion cache and security domain cache
+    "CacheExpiration": 300
+  }
+}
